@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "316120669836",
+    "project_id": "rheel-estate-deeplink-01",
+    "storage_bucket": "rheel-estate-deeplink-01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316120669836:android:321cc928b86f69016765a9",
+        "android_client_info": {
+          "package_name": "com.dreamsoftware.fyndr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS_IWCf_lSOzAvi7PnliHjit02GSC0AYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316120669836:android:e56710257b2494ac6765a9",
+        "android_client_info": {
+          "package_name": "rheel.easy.property.search"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS_IWCf_lSOzAvi7PnliHjit02GSC0AYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
