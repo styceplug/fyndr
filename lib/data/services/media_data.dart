@@ -1,7 +1,8 @@
-const List<String> mediaServices = [
-  'Photographer',
-  'Videographer',
-  'Drone Pilot',
-  'Graphics artist',
-  'Social Media Manager',
-];
+const Map<String, String> mediaServices = {
+  'Photographer': 'photographer',
+  'Videographer': 'videographer',
+  'Drone Pilot': 'drone-pilot',
+  'Graphics artist': 'graphics-artist',
+  'Social Media Manager': 'social-media-manager',
+};
+

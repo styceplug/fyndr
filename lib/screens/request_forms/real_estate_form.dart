@@ -180,7 +180,6 @@ class _RealEstateFormState extends State<RealEstateForm> {
               itemToString: (val) => val,
             ),
             SizedBox(height: Dimensions.height20),
-
             if (selectedState != null)
               LgaMultiSelect(
                 state: selectedState!,
@@ -246,7 +245,7 @@ class _RealEstateFormState extends State<RealEstateForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(fontSize: 10,
                         color: textColor?.withOpacity(0.8),),
                     ),

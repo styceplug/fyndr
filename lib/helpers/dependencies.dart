@@ -1,6 +1,8 @@
+import 'package:fyndr/controllers/app_controller.dart';
 import 'package:fyndr/controllers/auth_controller.dart';
 import 'package:fyndr/controllers/chat_controller.dart';
 import 'package:fyndr/controllers/version_controller.dart';
+import 'package:fyndr/data/repo/app_repo.dart';
 import 'package:fyndr/data/repo/auth_repo.dart';
 import 'package:fyndr/data/repo/chat_repo.dart';
 import 'package:fyndr/data/repo/version_repo.dart';
@@ -40,6 +42,7 @@ Future<void> init() async {
   Get.lazyPut(() => RequestRepo(apiClient: Get.find()));
   Get.lazyPut(() => NotificationRepo(apiClient: Get.find()));
   Get.lazyPut(() => ChatRepo(apiClient: Get.find()));
+  Get.lazyPut(() => AppRepo(apiClient: Get.find(), sharedPreferences: Get.find()));
 
 
 
@@ -51,5 +54,6 @@ Future<void> init() async {
   Get.lazyPut(() => RequestController(requestRepo: Get.find()));
   Get.lazyPut(() => NotificationController(notificationRepo: Get.find()));
   Get.lazyPut(() => ChatController(chatRepo: Get.find()));
+  Get.lazyPut(() => AppController(appRepo: Get.find()));
 
 }

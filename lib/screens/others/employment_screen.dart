@@ -29,37 +29,9 @@ class _EmploymentScreenState extends State<EmploymentScreen> {
 
     return Scaffold(
       appBar: CustomAppbar(
-        customTitle: Image.asset(
-          AppConstants.getPngAsset('logo'),
-          height: Dimensions.height65,
-        ),
+        leadingIcon: BackButton(),
+        title: 'Employment Screen',
         centerTitle: true,
-        leadingIcon: ProfileAvatar(
-          avatarUrl: authController.currentUser.value?.avatar,
-        ),
-
-        actionIcon: Row(
-          children: [
-            // Theme toggle
-            InkWell(
-              onTap: () => themeController.toggleTheme(),
-              child: Icon(
-                themeController.isDarkMode.value
-                    ? CupertinoIcons.sun_max_fill
-                    : CupertinoIcons.moon_fill,
-                color:
-                    themeController.isDarkMode.value
-                        ? Colors.yellow
-                        : iconColor,
-              ),
-            ),
-            SizedBox(width: Dimensions.width10),
-            InkWell(
-              onTap: () => Get.toNamed(AppRoutes.notificationScreen),
-              child: Icon(CupertinoIcons.bell_fill, color: iconColor),
-            ),
-          ],
-        ),
       ),
       body: SafeArea(
         child: Padding(

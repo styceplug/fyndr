@@ -17,10 +17,13 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAliveClientMixin{
   ChatController chatController = Get.find<ChatController>();
 
   Timer? pollingTimer;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {

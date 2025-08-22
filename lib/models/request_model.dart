@@ -18,6 +18,19 @@ class RequestModel {
   final RealEstate? realEstate;
   final CarPart? carPart;
   final Automobile? automobile;
+  final Beauty? beauty;
+  final Catering? catering;
+  final Carpentry? carpentry;
+  final Electrician? electrician;
+  final IT? it;
+  final Mechanic? mechanic;
+  final Media? media;
+  final Plumbing? plumbing;
+  final Hospitality? hospitality;
+  final EventManagement? eventManagement;
+
+
+
 
   final String? transactionId;
   final String? transactionReference;
@@ -46,6 +59,16 @@ class RequestModel {
     this.realEstate,
     this.carPart,
     this.automobile,
+    this.beauty,
+    this.catering,
+    this.carpentry,
+    this.electrician,
+    this.it,
+    this.mechanic,
+    this.media,
+    this.plumbing,
+    this.hospitality,
+    this.eventManagement,
     this.transactionStatus,
     this.createdAt,
     this.updatedAt,
@@ -94,6 +117,29 @@ class RequestModel {
           json['automobile'] != null
               ? Automobile.fromJson(json['automobile'])
               : null,
+      beauty:
+          json['beauty'] != null ? Beauty.fromJson(json['beauty']) : null,
+      catering:
+          json['catering'] != null ? Catering.fromJson(json['catering']) : null,
+      carpentry:
+          json['carpentry'] != null ? Carpentry.fromJson(json['carpentry']) : null,
+      electrician: json['electrician'] != null
+          ? Electrician.fromJson(json['electrician'])
+          : null,
+      it:
+          json['it'] != null ? IT.fromJson(json['it']) : null,
+      mechanic:
+          json['mechanic'] != null ? Mechanic.fromJson(json['mechanic']) : null,
+      media:
+          json['media'] != null ? Media.fromJson(json['media']) : null,
+      plumbing:
+          json['plumbing'] != null ? Plumbing.fromJson(json['plumbing']) : null,
+      hospitality: json['hospitality'] != null
+          ? Hospitality.fromJson(json['hospitality'])
+          : null,
+      eventManagement: json['eventManagement'] != null
+          ? EventManagement.fromJson(json['eventManagement'])
+          : null,
       transactionStatus: json['transaction_status'],
       createdAt:
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
@@ -135,7 +181,6 @@ class RequestModel {
     };
   }
 }
-
 
 class CarHire {
   final String? carType;
@@ -357,3 +402,379 @@ class Automobile {
     };
   }
 }
+
+class Beauty {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? targetLocation;
+  final String? service;
+  final DateTime? date;
+  final DateTime? time;
+
+  Beauty({
+    this.title,
+    this.state,
+    this.details,
+    this.targetLocation,
+    this.service,
+    this.date,
+    this.time,
+  });
+
+  factory Beauty.fromJson(Map<String, dynamic> json) => Beauty(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    targetLocation: json['targetLocation'],
+    service: json['service'],
+    date: json['date'] != null ? DateTime.tryParse(json['date']) : null,
+    time: json['time'] != null ? DateTime.tryParse(json['time']) : null,
+  );
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'state': state,
+      'details': details,
+      'targetLocation': targetLocation,
+      'service': service,
+      'date': date?.toIso8601String(),
+      'time': time?.toIso8601String(),
+    };
+  }
+
+}
+
+class Catering {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final String? eventLocation;
+  final DateTime? eventDate;
+
+  Catering({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.eventLocation,
+    this.eventDate,
+  });
+
+  factory Catering.fromJson(Map<String, dynamic> json) => Catering(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    eventLocation: json['eventLocation'],
+    eventDate:
+    json['eventDate'] != null ? DateTime.parse(json['eventDate']) : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'eventLocation': eventLocation,
+    'eventDate': eventDate?.toIso8601String(),
+  };
+}
+
+class Carpentry {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final DateTime? dateNeeded;
+
+  Carpentry({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.dateNeeded,
+  });
+
+  factory Carpentry.fromJson(Map<String, dynamic> json) => Carpentry(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    dateNeeded:
+    json['dateNeeded'] != null ? DateTime.parse(json['dateNeeded']) : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'dateNeeded': dateNeeded?.toIso8601String(),
+  };
+}
+
+class Electrician {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final DateTime? dateNeeded;
+
+  Electrician({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.dateNeeded,
+  });
+
+  factory Electrician.fromJson(Map<String, dynamic> json) => Electrician(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    dateNeeded:
+    json['dateNeeded'] != null ? DateTime.parse(json['dateNeeded']) : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'dateNeeded': dateNeeded?.toIso8601String(),
+  };
+}
+
+class IT {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? targetLocation;
+  final String? service;
+
+  IT({
+    this.title,
+    this.state,
+    this.details,
+    this.targetLocation,
+    this.service,
+  });
+
+  factory IT.fromJson(Map<String, dynamic> json) => IT(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    targetLocation: json['targetLocation'],
+    service: json['service'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'targetLocation': targetLocation,
+    'service': service,
+  };
+}
+
+class Mechanic {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? currentLocation;
+  final String? carMake;
+  final String? carModel;
+  final int? carYear;
+  final String? transmission;
+
+  Mechanic({
+    this.title,
+    this.state,
+    this.details,
+    this.currentLocation,
+    this.carMake,
+    this.carModel,
+    this.carYear,
+    this.transmission,
+  });
+
+  factory Mechanic.fromJson(Map<String, dynamic> json) => Mechanic(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    currentLocation: json['currentLocation'],
+    carMake: json['carMake'],
+    carModel: json['carModel'],
+    carYear: json['carYear'],
+    transmission: json['transmission'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'currentLocation': currentLocation,
+    'carMake': carMake,
+    'carModel': carModel,
+    'carYear': carYear,
+    'transmission': transmission,
+  };
+}
+
+class Media {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? targetLocation;
+  final String? service;
+
+  Media({
+    this.title,
+    this.state,
+    this.details,
+    this.targetLocation,
+    this.service,
+  });
+
+  factory Media.fromJson(Map<String, dynamic> json) => Media(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    targetLocation: json['targetLocation'],
+    service: json['service'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'targetLocation': targetLocation,
+    'service': service,
+  };
+}
+
+class Plumbing {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final DateTime? dateNeeded;
+
+  Plumbing({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.dateNeeded,
+  });
+
+  factory Plumbing.fromJson(Map<String, dynamic> json) => Plumbing(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    dateNeeded:
+    json['dateNeeded'] != null ? DateTime.parse(json['dateNeeded']) : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'dateNeeded': dateNeeded?.toIso8601String(),
+  };
+}
+
+class Hospitality {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final String? service;
+  final DateTime? dateNeeded;
+  final String? timeNeeded;
+
+  Hospitality({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.service,
+    this.dateNeeded,
+    this.timeNeeded,
+  });
+
+  factory Hospitality.fromJson(Map<String, dynamic> json) => Hospitality(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    service: json['service'],
+    dateNeeded: json['dateNeeded'] != null
+        ? DateTime.parse(json['dateNeeded'])
+        : null,
+    timeNeeded: json['timeNeeded'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'service': service,
+    'dateNeeded': dateNeeded?.toIso8601String(),
+    'timeNeeded': timeNeeded,
+  };
+}
+
+class EventManagement {
+  final String? title;
+  final String? state;
+  final String? details;
+  final String? location;
+  final String? service;
+  final String? eventLocation;
+  final DateTime? dateNeeded;
+
+  EventManagement({
+    this.title,
+    this.state,
+    this.details,
+    this.location,
+    this.service,
+    this.eventLocation,
+    this.dateNeeded,
+  });
+
+  factory EventManagement.fromJson(Map<String, dynamic> json) => EventManagement(
+    title: json['title'],
+    state: json['state'],
+    details: json['details'],
+    location: json['location'],
+    service: json['service'],
+    eventLocation: json['eventLocation'],
+    dateNeeded: json['dateNeeded'] != null
+        ? DateTime.parse(json['dateNeeded'])
+        : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'state': state,
+    'details': details,
+    'location': location,
+    'service': service,
+    'eventLocation': eventLocation,
+    'dateNeeded': dateNeeded?.toIso8601String(),
+  };
+}
+
+
+
+

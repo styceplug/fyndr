@@ -6,7 +6,8 @@ class AppConstants {
   static const String APP_NAME = 'FYNDR';
 
 
-  static const String BASE_URL = 'http://fyndr.ng:5002/api';
+  // static const String BASE_URL = 'http://fyndr.ng:5002/api';
+  static const String BASE_URL = 'https://rheel-compare.onrender.com/api';
 
   //TOKEN
   static const authToken = 'authToken';
@@ -26,6 +27,9 @@ class AppConstants {
 
 
   static const String SEND_TEXT = '/v1/message';
+
+
+
 
 
 
@@ -55,11 +59,31 @@ class AppConstants {
 
 
 
+  //employment
+  static const String GET_JOB_LISTINGS= '/v1/job';
+  static const String GET_ALL_CV= '/v1/cv';
+  static const String POST_OPEN_JOB = '/v1/job';
+  static const String POST_CV = '/v1/cv';
+
+
+
+
   static const String POST_CARPART_REQUESTS = '/v1/request/car-part';
   static const String POST_REALESTATE_REQUESTS = '/v1/request/real-estate';
   static const String POST_CLEANING_REQUESTS = '/v1/request/cleaning';
   static const String POST_CARHIRE_REQUESTS = '/v1/request/car-hire';
   static const String POST_AUTOMOBILE_REQUESTS = '/v1/request/automobile';
+  static const String POST_BEAUTY_REQUESTS = '/v1/request/beauty';
+  static const String POST_CATERING_REQUESTS = '/v1/request/catering';
+  static const String POST_CARPENTRY_REQUESTS = '/v1/request/carpenter';
+  static const String POST_ELECTRICAL_REQUESTS = '/v1/request/electrician';
+  static const String POST_IT_REQUESTS = '/v1/request/it';
+  static const String POST_MECHANIC_REQUESTS = '/v1/request/mechanic';
+  static const String POST_MEDIA_REQUESTS = '/v1/request/media';
+  static const String POST_PLUMBING_REQUESTS = '/v1/request/plumber';
+  static const String POST_HOSPITALITY_REQUESTS = '/v1/request/hospitality';
+  static const String POST_EVENT_MANAGEMENT_REQUESTS = '/v1/request/event-management';
+
 
 
 

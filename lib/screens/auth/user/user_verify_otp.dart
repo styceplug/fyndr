@@ -70,13 +70,10 @@ class _VerifyOtpState extends State<VerifyOtp> {
   }
 
   Widget otpBox(
-      BuildContext context,
       TextEditingController controller,
       FocusNode focusNode,
       FocusNode? nextFocus,
       ) {
-    final theme = Theme.of(context);
-
     return SizedBox(
       width: Dimensions.width50,
       height: Dimensions.height50,
@@ -89,18 +86,16 @@ class _VerifyOtpState extends State<VerifyOtp> {
         style: TextStyle(
           fontSize: Dimensions.font20,
           fontWeight: FontWeight.bold,
-          color: theme.textTheme.bodyLarge?.color,
         ),
         decoration: InputDecoration(
           counterText: '',
-          filled: true,
-          fillColor: theme.inputDecorationTheme.fillColor ??
-              (theme.brightness == Brightness.dark
-                  ? Colors.grey.shade900
-                  : Colors.grey.shade100),
+          contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(Dimensions.radius10),
-            borderSide: BorderSide(color: theme.dividerColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+            borderRadius: BorderRadius.circular(Dimensions.radius10),
           ),
         ),
         onChanged: (value) {
@@ -119,72 +114,83 @@ class _VerifyOtpState extends State<VerifyOtp> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Container(
-        height: Dimensions.screenHeight,
-        width: Dimensions.screenWidth,
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
-        child: Column(
-          children: [
-            SizedBox(height: Dimensions.height50 * 2.5),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: Dimensions.height50),
 
-            Text(
-              'Verify OTP',
-              style: TextStyle(
-                fontSize: Dimensions.font26,
-                fontWeight: FontWeight.w700,
-                color: theme.textTheme.titleLarge?.color,
+              Text(
+                'Verify OTP',
+                style: TextStyle(
+                  fontSize: Dimensions.font26,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-            SizedBox(height: Dimensions.height15),
+              SizedBox(height: Dimensions.height10),
 
-            Text(
-              'Input code received via WhatsApp',
-              style: TextStyle(
-                fontSize: Dimensions.font17,
-                fontWeight: FontWeight.w400,
-                color: theme.textTheme.bodyMedium?.color,
+              Text(
+                'Enter the 4-digit code sent to your inbox',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: Dimensions.font16,
+                  color: Colors.grey.shade600,
+                ),
               ),
-            ),
-            SizedBox(height: Dimensions.height30),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                otpBox(context, firstOtp, firstFocus, secondFocus),
-                otpBox(context, secondOtp, secondFocus, thirdFocus),
-                otpBox(context, thirdOtp, thirdFocus, fourthFocus),
-                otpBox(context, fourthOtp, fourthFocus, null),
-              ],
-            ),
+              SizedBox(height: Dimensions.height40),
 
-            SizedBox(height: Dimensions.height50),
-
-            InkWell(
-              onTap: resendOtp,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Icon(Iconsax.refresh, size: Dimensions.iconSize16, color: theme.iconTheme.color),
-                  SizedBox(width: Dimensions.width5),
-                  Text(
-                    'Resend OTP',
-                    style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-                  ),
+                  otpBox(firstOtp, firstFocus, secondFocus),
+                  otpBox(secondOtp, secondFocus, thirdFocus),
+                  otpBox(thirdOtp, thirdFocus, fourthFocus),
+                  otpBox(fourthOtp, fourthFocus, null),
                 ],
               ),
-            ),
 
-            const Spacer(),
+              SizedBox(height: Dimensions.height30),
 
-            CustomButton(
-              text: 'Verify OTP',
-              isDisabled: !isButtonEnabled,
-              onPressed: verifyOtp,
-            ),
-            SizedBox(height: Dimensions.height50),
-          ],
+              GestureDetector(
+                onTap: resendOtp,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Iconsax.refresh,
+                      size: Dimensions.iconSize16,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(width: Dimensions.width5),
+                    Text(
+                      'Resend OTP',
+                      style: TextStyle(
+                        fontSize: Dimensions.font14,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Spacer(),
+
+              CustomButton(
+                text: 'Verify OTP',
+                isDisabled: !isButtonEnabled,
+                onPressed: verifyOtp,
+              ),
+
+              SizedBox(height: Dimensions.height30),
+            ],
+          ),
         ),
       ),
+
     );
   }
 }

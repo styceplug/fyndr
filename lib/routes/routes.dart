@@ -7,10 +7,13 @@ import 'package:fyndr/screens/guest/guest_real_estate_form.dart';
 import 'package:fyndr/screens/main_menu/merchant/merchant_notification.dart';
 import 'package:fyndr/screens/main_menu/merchant/verify_merchant.dart';
 import 'package:fyndr/screens/main_menu/user/more_services_screen.dart';
+import 'package:fyndr/screens/main_menu/user/navigation.dart';
 import 'package:fyndr/screens/main_menu/user/notification_screen.dart';
 import 'package:fyndr/screens/others/employer_screen.dart';
 import 'package:fyndr/screens/others/employment_screen.dart';
 import 'package:fyndr/screens/others/job_seeker_screen.dart';
+import 'package:fyndr/screens/others/post_cv_screen.dart';
+import 'package:fyndr/screens/others/post_job_screen.dart';
 import 'package:fyndr/screens/request_forms/beauty_form.dart';
 import 'package:fyndr/screens/request_forms/carpentry_form.dart';
 import 'package:fyndr/screens/request_forms/event_form.dart';
@@ -91,6 +94,8 @@ class AppRoutes {
   static const String employmentScreen = '/employment-screen';
   static const String employerScreen = '/employer-screen';
   static const String jobSeekerScreen = '/job-seeker-screen';
+  static const String postJobScreen = '/post-job-screen';
+  static const String postCvScreen = '/post-cv-screen';
 
   static const String merchantMessageScreen = '/merchant-message';
   static const String merchantProfileScreen = '/merchant-profile';
@@ -425,7 +430,7 @@ class AppRoutes {
     GetPage(
       name: bottomNav,
       page: () {
-        return const BottomNav();
+        return const Navigation();
       },
       transition: Transition.fadeIn,
     ),
@@ -447,6 +452,20 @@ class AppRoutes {
       name: jobSeekerScreen,
       page: () {
         return const JobSeekerScreen();
+      },
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: postJobScreen,
+      page: () {
+        return const PostJobScreen();
+      },
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: postCvScreen,
+      page: () {
+        return const PostCvScreen();
       },
       transition: Transition.fadeIn,
     ),

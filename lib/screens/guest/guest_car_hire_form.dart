@@ -246,7 +246,7 @@ class _GuestCarHireFormState extends State<GuestCarHireForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(
                         fontSize: 10,
                         color: textColor?.withOpacity(0.8),

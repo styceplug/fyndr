@@ -118,17 +118,12 @@ class AuthRepo {
     return await apiClient.getData(AppConstants.MERCHANT_PROFILE);
   }
 
-  Future<Response> requestOtpMerchant(String phoneNumber) async {
-    final body = {
-      "number": phoneNumber,
-    };
+  Future<Response> requestOtpMerchant(Map<String, dynamic> body) async {
     return await apiClient.postData(AppConstants.MERCHANT_REQUEST_OTP, body);
   }
 
-  Future<Response> resendOtpMerchant(String phoneNumber) async {
-    final body = {
-      "number": phoneNumber,
-    };
+  Future<Response> resendOtpMerchant(Map<String, dynamic> body) async {
+
     return await apiClient.postData(AppConstants.MERCHANT_RESEND_OTP, body);
   }
 
@@ -212,17 +207,12 @@ class AuthRepo {
 
   //USERS
 
-  Future<Response> requestOtpUser(String phoneNumber) async {
-    final body = {
-      "number": phoneNumber,
-    };
+
+  Future<Response> requestOtpUser(Map<String, dynamic> body) async {
     return await apiClient.postData(AppConstants.USER_REQUEST_OTP, body);
   }
 
-  Future<Response> resendOtpUser(String phoneNumber) async {
-    final body = {
-      "number": phoneNumber,
-    };
+  Future<Response> resendOtpUser(Map<String, dynamic> body) async {
     return await apiClient.postData(AppConstants.USER_RESEND_OTP, body);
   }
 

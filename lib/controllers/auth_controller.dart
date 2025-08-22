@@ -40,6 +40,9 @@ class AuthController extends GetxController {
   RxList<NotificationModel> notifications = <NotificationModel>[].obs;
   SharedPreferences sharedPreferences = Get.find<SharedPreferences>();
   RequestController requestController = Get.find<RequestController>();
+  String? tempUserInput;
+  String? tempMerchantInput;
+
 
   //MERCHANTS
 
@@ -99,32 +102,69 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> requestMerchantOtp(String number) async {
+  Future<void> requestMerchantOtp(String input) async {
     loader.showLoader();
 
-    Response response = await authRepo.requestOtpMerchant(number);
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(input);
+    final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input);
+
+    Map<String, dynamic> body = {};
+    if (isPhone) {
+      body = {"number": input};
+    } else if (isEmail) {
+      body = {"email": input};
+    } else {
+      loader.hideLoader();
+      MySnackBars.failure(
+        title: "Invalid input",
+        message: "Enter a valid phone number or email",
+      );
+      return;
+    }
+
+    Response response = await authRepo.requestOtpMerchant(body);
 
     loader.hideLoader();
 
     if (response.statusCode == 200 && response.body['code'] == '00') {
-      tempPhoneNumber = number;
+      tempMerchantInput = input; // 👈 store merchant input
       tempOtpRef = response.body['data'];
 
       print('✅ OTP sent successfully. Ref: $tempOtpRef');
 
       Get.toNamed(
         AppRoutes.merchantVerifyOtpScreen,
-        arguments: {'phone': number, 'otpRef': tempOtpRef},
+        arguments: {
+          'input': input,
+          'isPhone': isPhone,
+          'otpRef': tempOtpRef,
+        },
       );
     } else {
+      MySnackBars.failure(
+        title: 'OTP Request Failed',
+        message: 'Please try again',
+      );
       ApiChecker.checkApi(response);
     }
   }
 
   Future<void> resendMerchantOtp() async {
+    if (tempMerchantInput == null) {
+      MySnackBars.failure(
+        title: "Error",
+        message: "No previous request found",
+      );
+      return;
+    }
+
     loader.showLoader();
 
-    Response response = await authRepo.resendOtpMerchant(tempPhoneNumber!);
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(tempMerchantInput!);
+    Map<String, dynamic> body =
+    isPhone ? {"number": tempMerchantInput} : {"email": tempMerchantInput};
+
+    Response response = await authRepo.resendOtpMerchant(body);
 
     loader.hideLoader();
 
@@ -135,12 +175,66 @@ class AuthController extends GetxController {
 
       MySnackBars.success(
         title: 'OTP Sent',
-        message: 'OTP resent successfully to $tempPhoneNumber',
+        message: 'OTP resent successfully to $tempMerchantInput',
       );
     } else {
       ApiChecker.checkApi(response);
     }
   }
+
+  Future<void> verifyMerchantOtp({required String otp}) async {
+    if (tempMerchantInput == null) {
+      MySnackBars.failure(
+        title: "Error",
+        message: "No input found for verification",
+      );
+      return;
+    }
+
+    loader.showLoader();
+
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(tempMerchantInput!);
+    final body = {
+      if (isPhone) "number": tempMerchantInput,
+      if (!isPhone) "email": tempMerchantInput,
+      "otp": otp,
+      "userType": "merchant", // 👈 fixed
+    };
+
+    Response response = await authRepo.verifyOtp(body);
+
+    loader.hideLoader();
+
+    if (response.statusCode == 200 && response.body['code'] == '00') {
+      final data = response.body['data'];
+      final merchantJson = data['user'];
+      final token = data['token'];
+
+      merchantModel.value = MerchantModel.fromJson(merchantJson);
+
+      // Save merchant session
+      await storeMerchantSession(merchant: merchantModel.value!, token: token);
+      await refreshMerchantProfile();
+      await requestController.fetchMerchantRequests();
+
+      // Navigate based on profile completeness
+      if (isMerchantProfileComplete(merchantJson)) {
+        await sharedPreferences.setBool(AppConstants.isMerchant, true);
+        await refreshMerchantProfile();
+        Get.offAllNamed(AppRoutes.merchantBottomNav);
+
+        loadMerchantProfile();
+      } else {
+        Get.offAllNamed(
+          AppRoutes.merchantCompleteAuth,
+          arguments: merchantJson,
+        );
+      }
+    } else {
+      ApiChecker.checkApi(response);
+    }
+  }
+
 
   bool isMerchantProfileComplete(Map<String, dynamic> merchant) {
     return merchant['name'] != null &&
@@ -161,50 +255,9 @@ class AuthController extends GetxController {
         (merchant['servicesOffered'] as List).isNotEmpty;
   }
 
-  Future<void> verifyMerchantOtp({required String otp}) async {
-    loader.showLoader();
-
-    final body = {
-      "number": tempPhoneNumber,
-      "otp": otp,
-      "userType": "merchant",
-    };
-
-    Response response = await authRepo.verifyOtp(body);
-
-    loader.hideLoader();
-
-    if (response.statusCode == 200 && response.body['code'] == '00') {
-      final data = response.body['data'];
-      final merchantJson = data['user'];
-      final token = data['token'];
-
-      merchantModel.value = MerchantModel.fromJson(merchantJson);
-
-      // Save token
-      await storeMerchantSession(merchant: merchantModel.value!, token: token);
-      await refreshMerchantProfile();
-      await requestController.fetchMerchantRequests();
-      // loadCachedMerchantProfile();
 
 
-      // Navigate based on profile completeness
-      if (isMerchantProfileComplete(merchantJson)) {
-        await sharedPreferences.setBool(AppConstants.isMerchant, true);
-        await refreshMerchantProfile();
-        Get.offAllNamed(AppRoutes.merchantBottomNav);
 
-        loadMerchantProfile();
-      } else {
-        Get.offAllNamed(
-          AppRoutes.merchantCompleteAuth,
-          arguments: merchantJson,
-        );
-      }
-    } else {
-      ApiChecker.checkApi(response);
-    }
-  }
 
   Future<void> loadMerchantProfile() async {
     loader.showLoader();
@@ -389,7 +442,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> loadUserProfile() async {
-    loader.showLoader();
+    loader.hideLoader();
     final response = await authRepo.fetchUserProfile();
     loader.hideLoader();
 
@@ -433,7 +486,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> requestUserOtp(String number) async {
+/*  Future<void> requestUserOtp(String number) async {
     loader.showLoader();
 
     Response response = await authRepo.requestOtpUser(number);
@@ -472,6 +525,131 @@ class AuthController extends GetxController {
         title: 'OTP Sent',
         message: 'OTP resent successfully to $tempPhoneNumber',
       );
+    } else {
+      ApiChecker.checkApi(response);
+    }
+  }*/
+
+
+  Future<void> requestUserOtp(String input) async {
+    loader.showLoader();
+
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(input);
+    final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input);
+
+    Map<String, dynamic> body = {};
+    if (isPhone) {
+      body = {"number": input};
+    } else if (isEmail) {
+      body = {"email": input};
+    } else {
+      loader.hideLoader();
+      MySnackBars.failure(
+        title: "Invalid input",
+        message: "Enter a valid phone number or email",
+      );
+      return;
+    }
+
+    Response response = await authRepo.requestOtpUser(body);
+
+    loader.hideLoader();
+
+    if (response.statusCode == 200 && response.body['code'] == '00') {
+      tempUserInput = input;
+      tempOtpRef = response.body['data'];
+
+      print('✅ OTP sent successfully. Ref: $tempOtpRef');
+
+      Get.toNamed(
+        AppRoutes.userVerifyOtpScreen,
+        arguments: {
+          'input': input,
+          'isPhone': isPhone,
+          'otpRef': tempOtpRef,
+        },
+      );
+    } else {
+      MySnackBars.failure(
+        title: 'OTP Request Failed',
+        message: 'Please try again',
+      );
+      ApiChecker.checkApi(response);
+    }
+  }
+
+  Future<void> resendUserOtp() async {
+    if (tempUserInput == null) {
+      MySnackBars.failure(
+        title: "Error",
+        message: "No previous request found",
+      );
+      return;
+    }
+
+    loader.showLoader();
+
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(tempUserInput!);
+    Map<String, dynamic> body =
+    isPhone ? {"number": tempUserInput} : {"email": tempUserInput};
+
+    Response response = await authRepo.resendOtpUser(body);
+
+    loader.hideLoader();
+
+    if (response.statusCode == 200 && response.body['code'] == '00') {
+      tempOtpRef = response.body['data'];
+
+      print('✅ OTP resent successfully. Ref: $tempOtpRef');
+
+      MySnackBars.success(
+        title: 'OTP Sent',
+        message: 'OTP resent successfully to $tempUserInput',
+      );
+    } else {
+      ApiChecker.checkApi(response);
+    }
+  }
+
+  Future<void> verifyUserOtp({required String otp}) async {
+    if (tempUserInput == null) {
+      MySnackBars.failure(
+        title: "Error",
+        message: "No input found for verification",
+      );
+      return;
+    }
+
+    loader.showLoader();
+
+    final isPhone = RegExp(r'^[0-9]{11}$').hasMatch(tempUserInput!);
+    final body = {
+      if (isPhone) "number": tempUserInput,
+      if (!isPhone) "email": tempUserInput,
+      "otp": otp,
+      "userType": "user",
+    };
+
+    Response response = await authRepo.verifyOtp(body);
+
+    loader.hideLoader();
+
+    if (response.statusCode == 200 && response.body['code'] == '00') {
+      final data = response.body['data'];
+      final userJson = data['user'];
+      final token = data['token'];
+
+      userModel = UserModel.fromJson(userJson);
+
+      await authRepo.saveUserToken(token);
+      await sharedPreferences.setBool(AppConstants.isMerchant, false);
+
+      if (_isUserProfileComplete(userJson)) {
+        await loadUserProfile();
+        Get.offAllNamed(AppRoutes.bottomNav);
+      } else {
+        Get.offAllNamed(AppRoutes.userCompleteAuth, arguments: userJson);
+      }
     } else {
       ApiChecker.checkApi(response);
     }
@@ -540,7 +718,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> verifyUserOtp({required String otp}) async {
+/*  Future<void> verifyUserOtp({required String otp}) async {
     loader.showLoader();
 
     final body = {"number": tempPhoneNumber, "otp": otp, "userType": "user"};
@@ -572,7 +750,7 @@ class AuthController extends GetxController {
     } else {
       ApiChecker.checkApi(response);
     }
-  }
+  }*/
 
   Future<void> logout() async {
     await authRepo.clearUserToken();

@@ -34,7 +34,7 @@ class CustomButton extends StatelessWidget {
 
     final Color effectiveBgColor = isDisabled
         ? Colors.grey.shade500.withOpacity(0.4)
-        : backgroundColor ?? (isDark ? AppColors.green2 : AppColors.primary);
+        : backgroundColor ?? (isDark ? AppColors.green2 : Color(0xFF85CE5C));
 
     final Color effectiveTextColor = textStyle?.color ??
         (effectiveBgColor.computeLuminance() < 0.5 ? Colors.white : Colors.black);

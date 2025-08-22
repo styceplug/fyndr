@@ -35,7 +35,6 @@ class RequestRepo {
       "proposal": proposal,
       "senderType": "Merchant"
     };
-
     return await apiClient.postData(AppConstants.START_CHAT, body);
   }
 
@@ -123,6 +122,48 @@ class RequestRepo {
     );
   }
 
+  Future<Response> postBeautyRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_BEAUTY_REQUESTS, body);
+  }
+
+  Future<Response> postCateringRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_CATERING_REQUESTS, body);
+  }
+
+  Future<Response> postCarpentryRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_CARPENTRY_REQUESTS, body);
+  }
+
+  Future<Response> postElectricianRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_ELECTRICAL_REQUESTS, body);
+  }
+
+
+  Future<Response> postITRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_IT_REQUESTS, body);
+  }
+
+  Future<Response> postMechanicRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_MECHANIC_REQUESTS, body);
+  }
+
+  Future<Response> postMediaRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_MEDIA_REQUESTS, body);
+  }
+
+  Future<Response> postPlumbingRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_PLUMBING_REQUESTS, body);
+  }
+
+
+  Future<Response> postHospitalityRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_HOSPITALITY_REQUESTS, body);
+  }
+
+  Future<Response> postEventManagementRequest(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_EVENT_MANAGEMENT_REQUESTS, body);
+  }
+
   Future<Response> cancelUserRequest(String requestId) async {
     final uri = AppConstants.CANCEL_REQUEST.replaceFirst(
       '{requestId}',
@@ -137,5 +178,21 @@ class RequestRepo {
       requestId,
     );
     return await apiClient.putData(uri, {});
+  }
+
+  Future<Response> getJobListings() async {
+    return await apiClient.getData(AppConstants.GET_JOB_LISTINGS);
+  }
+
+  Future<Response> postJobListing(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_OPEN_JOB, body);
+  }
+
+  Future<Response> postCV(Map<String, dynamic> body) async {
+    return await apiClient.postData(AppConstants.POST_CV, body);
+  }
+
+  Future<Response> getAllCv() async{
+    return await apiClient.getData(AppConstants.GET_ALL_CV);
   }
 }

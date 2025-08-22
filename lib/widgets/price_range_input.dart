@@ -57,16 +57,26 @@ class _PriceRangeInputState extends State<PriceRangeInput> {
       children: [
         Text("Price Range", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         const SizedBox(height: 12),
-        RangeSlider(
-          values: _range,
-          min: 0,
-          max: 500000000,
-          divisions: 10000,
-          labels: RangeLabels(
-            '₦${_range.start.toInt()}',
-            '₦${_range.end.toInt()}',
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: Colors.green,   // rod (active part)
+            inactiveTrackColor: Colors.grey,  // rod (inactive part)
+            thumbColor: Colors.brown,          // slider handle
+            overlayColor: Colors.blue.withOpacity(0.2), // ripple around handle
+            rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 8),
+            trackHeight: 4, // thickness of rod
           ),
-          onChanged: _onSliderChanged,
+          child: RangeSlider(
+            values: _range,
+            min: 0,
+            max: 500000000,
+            divisions: 10000,
+            labels: RangeLabels(
+              '₦${_range.start.toInt()}',
+              '₦${_range.end.toInt()}',
+            ),
+            onChanged: _onSliderChanged,
+          ),
         ),
         Row(
           children: [

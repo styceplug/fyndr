@@ -11,6 +11,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/dropdown_textfield.dart';
+import '../../widgets/snackbars.dart';
 
 class ElectricianForm extends StatefulWidget {
   const ElectricianForm({super.key});
@@ -46,7 +47,7 @@ class _ElectricianFormState extends State<ElectricianForm> {
         acceptTerms;
   }
 
-  /* void submitRequest() async {
+  void submitRequest() async {
     if (!isFormValid) {
       MySnackBars.failure(
         title: "Incomplete",
@@ -78,28 +79,18 @@ class _ElectricianFormState extends State<ElectricianForm> {
               Get.back(); // dismiss dialog first
 
               final body = {
-                "title": "${selectedMake ?? ''} ${selectedModel ?? ''} Request",
+                "title": "Electrician Request",
                 "state": selectedState,
                 "details": descriptionController.text.trim(),
                 "location": locationController.text.trim(),
-                "carMake": selectedMake,
-                "carModel": selectedModel,
-                "carYearFrom": int.tryParse(selectedYearFrom ?? '0') ?? 0,
-                "carYearTo": int.tryParse(selectedYearTo ?? '0') ?? 0,
-                "transmission": selectedTransmission?.toLowerCase(),
-                "upperPriceLimit": selectedPriceRange.end.toInt(),
-                "lowerPriceLimit": selectedPriceRange.start.toInt(),
+                "date": selectedDate?.toIso8601String()
+
               };
 
-              await requestController.createAutomobileRequest(body, onSuccess: () {
+              await requestController.createElectricianRequest(body, onSuccess: () {
                 setState(() {
                   selectedState = null;
-                  selectedMake = null;
-                  selectedModel = null;
-                  selectedYearFrom = null;
-                  selectedYearTo = null;
-                  selectedTransmission = null;
-                  selectedPriceRange = const RangeValues(0, 1000000);
+                  selectedDate = null;
                   locationController.clear();
                   descriptionController.clear();
                   acceptTerms = false;
@@ -112,7 +103,8 @@ class _ElectricianFormState extends State<ElectricianForm> {
       ),
       barrierDismissible: false,
     );
-  }*/
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +193,7 @@ class _ElectricianFormState extends State<ElectricianForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(
                         fontSize: 10,
                         color: textColor?.withOpacity(0.8),
@@ -219,7 +211,7 @@ class _ElectricianFormState extends State<ElectricianForm> {
               isDisabled: !isFormValid,
               text: 'Submit Request',
               onPressed: () {
-                // submitRequest();
+                submitRequest();
               },
             ),
             SizedBox(height: Dimensions.height30),

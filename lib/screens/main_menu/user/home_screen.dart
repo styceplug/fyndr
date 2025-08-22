@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fyndr/controllers/auth_controller.dart';
 import 'package:fyndr/controllers/theme_controller.dart';
+import 'package:fyndr/widgets/app_bar_avatar.dart';
 import 'package:fyndr/widgets/profile_avatar.dart';
 import 'package:get/get.dart';
 import 'package:fyndr/data/services/home_marque.dart';
@@ -67,25 +68,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: Dimensions.height65,
                 ),
                 centerTitle: true,
-                leadingIcon: ProfileAvatar(
+                leadingIcon: AppBarAvatar(
                   avatarUrl: authController.currentUser.value?.avatar,
                 ),
 
                 actionIcon: Row(
                   children: [
-                    // Theme toggle
                     InkWell(
                       onTap: () => themeController.toggleTheme(),
-                      child: Icon(
-                        themeController.isDarkMode.value
-                            ? CupertinoIcons.sun_max_fill
-                            : CupertinoIcons.moon_fill,
-                        color:
-                            themeController.isDarkMode.value
-                                ? Colors.yellow
-                                : iconColor,
-                      ),
+                      child: Obx(() {
+                        final isDark =
+                            themeController.themeMode.value == ThemeMode.dark;
+                        return Icon(
+                          isDark
+                              ? CupertinoIcons.sun_max_fill
+                              : CupertinoIcons.moon_fill,
+                          color: isDark ? Colors.yellow : iconColor,
+                        );
+                      }),
                     ),
+
                     SizedBox(width: Dimensions.width10),
                     InkWell(
                       onTap: () => Get.toNamed(AppRoutes.notificationScreen),
@@ -133,9 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => Get.toNamed(AppRoutes.carPartsForm),
                     ),
                     ServiceCard(
-                      iconName: 'carHi',
-                      title: 'Car Hire',
-                      onTap: () => Get.toNamed(AppRoutes.carHireForm),
+                      iconName: 'employ',
+                      title: 'Employment',
+                      onTap: () => Get.toNamed(AppRoutes.employmentScreen),
                     ),
                   ],
                 ),
@@ -207,7 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               SizedBox(height: Dimensions.height20),
 
-              // Section title
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
                 child: Row(
@@ -225,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: Dimensions.height20),
 
               Padding(
-
                 padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
                 child: AdsCarousel(),
               ),

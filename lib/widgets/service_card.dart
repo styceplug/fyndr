@@ -34,6 +34,7 @@ class ServiceCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimensions.radius15),
               border: Border.all(color: Colors.white.withOpacity(0.8)),
               image: DecorationImage(
+                fit: BoxFit.fill,
                 image: AssetImage(AppConstants.getPngAsset(iconName)),
               ),
             ),

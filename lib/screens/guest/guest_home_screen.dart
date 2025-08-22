@@ -31,6 +31,85 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   final AuthController authController = Get.find<AuthController>();
   final ThemeController themeController = Get.find<ThemeController>();
 
+  void onItemTapped() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 24.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.lock_outline, size: 48, color: Colors.orange),
+              const SizedBox(height: 16),
+              Text(
+                'Create an Account',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'You need an account to access this feature. Sign up now to continue.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.grey[700],
+                        side: BorderSide(color: Colors.grey.shade300),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Get.offAllNamed(AppRoutes.onboardingScreen);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text('Sign Up'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -80,19 +159,17 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                     // Theme toggle
                     InkWell(
                       onTap: () => themeController.toggleTheme(),
-                      child: Icon(
-                        themeController.isDarkMode.value
-                            ? CupertinoIcons.sun_max_fill
-                            : CupertinoIcons.moon_fill,
-                        color:
-                        themeController.isDarkMode.value
-                            ? Colors.yellow
-                            : iconColor,
-                      ),
+                      child: Obx(() {
+                        final isDark = themeController.themeMode.value == ThemeMode.dark;
+                        return Icon(
+                          isDark ? CupertinoIcons.sun_max_fill : CupertinoIcons.moon_fill,
+                          color: isDark ? Colors.yellow : iconColor,
+                        );
+                      }),
                     ),
                     SizedBox(width: Dimensions.width10),
                     InkWell(
-                      onTap: () => Get.toNamed(AppRoutes.notificationScreen),
+                      onTap: onItemTapped,
                       child: Icon(CupertinoIcons.bell_fill, color: iconColor),
                     ),
                   ],
@@ -135,8 +212,8 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                       onTap: () => Get.toNamed(AppRoutes.guestCarPartsForm),
                     ),
                     ServiceCard(
-                      iconName: 'carHi',
-                      title: 'Car Hire',
+                      iconName: 'employ',
+                      title: 'Employment',
                       onTap: () => Get.toNamed(AppRoutes.guestCarHireForm),
                     ),
                   ],
@@ -162,7 +239,9 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                       onTap: () => Get.toNamed(AppRoutes.guestAutomobileForm),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        onItemTapped();
+                      },
                       child: Column(
                         children: [
                           Container(

@@ -85,13 +85,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Container(
         height: Dimensions.screenHeight,
         width: Dimensions.screenWidth,
         padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),
-        decoration: BoxDecoration(
-          color: theme.scaffoldBackgroundColor,
-        ),
+
         child: Column(
           children: [
             Expanded(

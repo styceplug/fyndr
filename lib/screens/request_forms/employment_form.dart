@@ -106,8 +106,8 @@ class _EmploymentFormState extends State<EmploymentForm> {
             buildDropdown('Your State', stateLgaMap.keys.toList(), selectedState,
                     (val) => setState(() => selectedState = val)),
             buildField('Location', locationController),
-            buildDropdown('Service Required', beautyServices, selectedService,
-                    (val) => setState(() => selectedService = val)),
+           /* buildDropdown('Service Required', beautyServices, selectedService,
+                    (val) => setState(() => selectedService = val)),*/
             buildDateTimePicker(),
             SizedBox(height: Dimensions.height20),
             buildField('Additional Details', descriptionController, maxLines: 5),
@@ -151,7 +151,7 @@ class _EmploymentFormState extends State<EmploymentForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'Accept N499 fee policy to proceed with request.',
+                      'Accept N250 fee policy to proceed with request.',
                       style: TextStyle(fontSize: 12, color: textColor?.withOpacity(0.8)),
                     ),
                   ),
@@ -258,7 +258,7 @@ class _EmploymentFormState extends State<EmploymentForm> {
     buildField('How did you hear about us?', hearAboutUsController),
     buildField('Job Title', jobTitleController),
     buildField('Job Location', jobLocationController),
-    buildDropdown('Job Type', jobTypes, selectedJobType,
+    buildDropdown('Job Type', jobTypes.keys.toList(), selectedJobType,
             (val) => setState(() => selectedJobType = val)),
     buildField('Min. Salary', minSalaryController),
     buildField('Job Description', descriptionController, maxLines: 4),

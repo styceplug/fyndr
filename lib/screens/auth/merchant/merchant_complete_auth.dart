@@ -81,77 +81,80 @@ class _MerchantCompleteAuthState extends State<MerchantCompleteAuth> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CustomAppbar(
         title: 'Register as a Merchant',
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(Dimensions.width20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: Dimensions.height30),
-              Text(
-                'Fill Required Information',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize: Dimensions.font17,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(Dimensions.width20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // SizedBox(height: Dimensions.height30),
+                Text(
+                  'Fill Required Information',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: Dimensions.font17,
+                  ),
                 ),
-              ),
-              SizedBox(height: Dimensions.height20),
-
-              buildField("Full Name", nameController),
-              buildField("Email Address", emailController),
-              buildField("Business Name", businessNameController),
-
-              SizedBox(height: Dimensions.height10),
-              StateLgaDropdown(
-                selectedState: authController.selectedState,
-                selectedLga: authController.selectedLga,
-                onStateChanged: (val) => setState(() => authController.selectedState = val),
-                onLgaChanged: (val) => setState(() => authController.selectedLga = val),
-              ),
-
-              buildField("Business Address", addressController),
-
-              SizedBox(height: Dimensions.height20),
-              Text("Face Verification", style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-              SizedBox(height: Dimensions.height10),
-              buildImageUploadSection(context),
-
-              buildField("WhatsApp Number", whatsappController),
-
-              SizedBox(height: Dimensions.height20),
-              Text("Select Services Offered", style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-              SizedBox(height: Dimensions.height10),
-
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: merchantServicesMap.entries.map((entry) {
-                  final label = entry.key;
-                  final slug = entry.value;
-                  final selected = selectedServices.contains(slug);
-                  return FilterChip(
-                    label: Text(label),
-                    selected: selected,
-                    onSelected: (value) {
-                      setState(() {
-                        value ? selectedServices.add(slug) : selectedServices.remove(slug);
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-
-              SizedBox(height: Dimensions.height30),
-              CustomButton(
-                text: 'Submit Details',
-                isDisabled: !isFormValid,
-                onPressed: register,
-              ),
-              SizedBox(height: Dimensions.height50),
-            ],
+                SizedBox(height: Dimensions.height20),
+        
+                buildField("Full Name", nameController),
+                buildField("Email Address", emailController),
+                buildField("Business Name", businessNameController),
+        
+                SizedBox(height: Dimensions.height10),
+                StateLgaDropdown(
+                  selectedState: authController.selectedState,
+                  selectedLga: authController.selectedLga,
+                  onStateChanged: (val) => setState(() => authController.selectedState = val),
+                  onLgaChanged: (val) => setState(() => authController.selectedLga = val),
+                ),
+        
+                buildField("Business Address", addressController),
+        
+                SizedBox(height: Dimensions.height20),
+                Text("Face Verification", style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                SizedBox(height: Dimensions.height10),
+                buildImageUploadSection(context),
+        
+                buildField("WhatsApp Number", whatsappController),
+        
+                SizedBox(height: Dimensions.height20),
+                Text("Select Services Offered", style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                SizedBox(height: Dimensions.height10),
+        
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: merchantServicesMap.entries.map((entry) {
+                    final label = entry.key;
+                    final slug = entry.value;
+                    final selected = selectedServices.contains(slug);
+                    return FilterChip(
+                      label: Text(label),
+                      selected: selected,
+                      onSelected: (value) {
+                        setState(() {
+                          value ? selectedServices.add(slug) : selectedServices.remove(slug);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+        
+                SizedBox(height: Dimensions.height30),
+                CustomButton(
+                  text: 'Submit Details',
+                  isDisabled: !isFormValid,
+                  onPressed: register,
+                ),
+                SizedBox(height: Dimensions.height50),
+              ],
+            ),
           ),
         ),
       ),

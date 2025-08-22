@@ -20,7 +20,7 @@ class RequestScreen extends StatefulWidget {
   State<RequestScreen> createState() => _RequestScreenState();
 }
 
-class _RequestScreenState extends State<RequestScreen> with TickerProviderStateMixin {
+class _RequestScreenState extends State<RequestScreen> with TickerProviderStateMixin,  AutomaticKeepAliveClientMixin{
   final requestController = Get.find<RequestController>();
   late TabController _tabController;
 
@@ -29,9 +29,12 @@ class _RequestScreenState extends State<RequestScreen> with TickerProviderStateM
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      requestController.fetchUserRequests(showLoader: true);
+      // requestController.fetchUserRequests(showLoader: false);
     });
   }
+
+@override
+bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {

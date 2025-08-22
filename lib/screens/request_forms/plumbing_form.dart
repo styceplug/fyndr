@@ -12,6 +12,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/dropdown_textfield.dart';
+import '../../widgets/snackbars.dart';
 
 class PlumbingForm extends StatefulWidget {
   const PlumbingForm({super.key});
@@ -47,7 +48,7 @@ class _PlumbingFormState extends State<PlumbingForm> {
         acceptTerms;
   }
 
-  /* void submitRequest() async {
+  void submitRequest() async {
     if (!isFormValid) {
       MySnackBars.failure(
         title: "Incomplete",
@@ -79,28 +80,18 @@ class _PlumbingFormState extends State<PlumbingForm> {
               Get.back(); // dismiss dialog first
 
               final body = {
-                "title": "${selectedMake ?? ''} ${selectedModel ?? ''} Request",
+                "title": "Plumbing Request",
                 "state": selectedState,
                 "details": descriptionController.text.trim(),
                 "location": locationController.text.trim(),
-                "carMake": selectedMake,
-                "carModel": selectedModel,
-                "carYearFrom": int.tryParse(selectedYearFrom ?? '0') ?? 0,
-                "carYearTo": int.tryParse(selectedYearTo ?? '0') ?? 0,
-                "transmission": selectedTransmission?.toLowerCase(),
-                "upperPriceLimit": selectedPriceRange.end.toInt(),
-                "lowerPriceLimit": selectedPriceRange.start.toInt(),
+                "date": selectedDate?.toIso8601String()
+
               };
 
-              await requestController.createAutomobileRequest(body, onSuccess: () {
+              await requestController.createPlumbingRequest(body, onSuccess: () {
                 setState(() {
                   selectedState = null;
-                  selectedMake = null;
-                  selectedModel = null;
-                  selectedYearFrom = null;
-                  selectedYearTo = null;
-                  selectedTransmission = null;
-                  selectedPriceRange = const RangeValues(0, 1000000);
+                  selectedDate = null;
                   locationController.clear();
                   descriptionController.clear();
                   acceptTerms = false;
@@ -113,7 +104,8 @@ class _PlumbingFormState extends State<PlumbingForm> {
       ),
       barrierDismissible: false,
     );
-  }*/
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +198,7 @@ class _PlumbingFormState extends State<PlumbingForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(
                         fontSize: 10,
                         color: textColor?.withOpacity(0.8),
@@ -224,7 +216,7 @@ class _PlumbingFormState extends State<PlumbingForm> {
               isDisabled: !isFormValid,
               text: 'Submit Request',
               onPressed: () {
-                // submitRequest();
+                submitRequest();
               },
             ),
             SizedBox(height: Dimensions.height30),

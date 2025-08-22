@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fyndr/controllers/request_controller.dart';
+import 'package:fyndr/routes/routes.dart';
+import 'package:fyndr/widgets/empty_state_widget.dart';
+import 'package:fyndr/widgets/job_post_card.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
+import '../../models/job_model.dart';
 import '../../utils/app_constants.dart';
 import '../../utils/dimensions.dart';
 import '../../widgets/custom_appbar.dart';
@@ -14,11 +22,25 @@ class JobSeekerScreen extends StatefulWidget {
 }
 
 class _JobSeekerScreenState extends State<JobSeekerScreen> {
+  RequestController requestController = Get.find<RequestController>();
+  TextEditingController searchController = TextEditingController();
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      requestController.fetchJobListings();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final textColor =
@@ -26,7 +48,10 @@ class _JobSeekerScreenState extends State<JobSeekerScreen> {
     final iconColor = Theme.of(context).iconTheme.color ?? Colors.black;
 
     return Scaffold(
-      appBar: CustomAppbar(title: 'Job Seekers Screen'),
+      appBar: CustomAppbar(
+        title: 'Job Seekers Screen',
+        leadingIcon: BackButton(),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
@@ -35,49 +60,49 @@ class _JobSeekerScreenState extends State<JobSeekerScreen> {
           ),
           child: Column(
             children: [
-              CustomButton(text: 'Create CV', onPressed: () {}),
+              CustomButton(
+                text: 'Create CV',
+                onPressed: () {
+                  Get.toNamed(AppRoutes.postCvScreen);
+                },
+              ),
               SizedBox(height: Dimensions.height20),
               CustomTextField(
                 hintText: 'Filter by Job Title',
                 prefixIcon: Icons.search,
+                controller: searchController,
+                onChanged: (value) {
+                  requestController.filterJobs(value);
+                },
               ),
               SizedBox(height: Dimensions.height20),
-              Container(
-                height: Dimensions.height10 * 8,
-                padding: EdgeInsets.only(right: Dimensions.width10),
-                decoration: BoxDecoration(
-                  // color: Colors.red,
-                  border: Border.all(color: iconColor),
-                  borderRadius: BorderRadius.circular(Dimensions.radius30),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      height: Dimensions.height70,
-                      width: Dimensions.width70,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(AppConstants.getPngAsset('user')),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: Dimensions.width20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'First Name Last Name',
-                          style: TextStyle(color: textColor),
-                        ),
-                        Text('Occupation', style: TextStyle(color: textColor)),
-                        Text('Location', style: TextStyle(color: textColor)),
-                      ],
-                    ),
-                    Spacer(),
-                    Text('View Job'),
-                  ],
+              Expanded(
+                child: GetBuilder<RequestController>(
+                  builder: (controller) {
+                    if (controller.filteredJobs.isEmpty) {
+                      return const EmptyState(message: "No jobs available");
+                    }
+
+                    return ListView.builder(
+                      itemCount: controller.filteredJobs.length,
+                      itemBuilder: (context, index) {
+                        JobModel job = controller.filteredJobs[index];
+                        final time =
+                            job.createdAt != null
+                                ? timeago.format(job.createdAt!)
+                                : '';
+                        return JobPostCard(
+                          name: job.jobDetails?.title ?? "Unknown",
+                          occupation:
+                              job.employerDetails?.company ?? "Not specified",
+                          location: job.jobDetails?.location ?? "N/A",
+                          salary: job.jobDetails?.salary.toString() ?? "N/A",
+                          timePosted: time,
+                          vacancy: job.jobDetails?.availableVacancy ?? "N/A",
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],

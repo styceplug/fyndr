@@ -13,6 +13,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/dropdown_textfield.dart';
 import '../../widgets/price_range_input.dart';
+import '../../widgets/snackbars.dart';
 
 class BeautyForm extends StatefulWidget {
   const BeautyForm({super.key});
@@ -23,6 +24,7 @@ class BeautyForm extends StatefulWidget {
 
 class _BeautyFormState extends State<BeautyForm> {
   String? selectedService;
+  String? selectedLabel;
   String? selectedState;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
@@ -50,7 +52,7 @@ class _BeautyFormState extends State<BeautyForm> {
         acceptTerms;
   }
 
- /* void submitRequest() async {
+  void submitRequest() async {
     if (!isFormValid) {
       MySnackBars.failure(
         title: "Incomplete",
@@ -59,7 +61,7 @@ class _BeautyFormState extends State<BeautyForm> {
       return;
     }
 
-    // Show Disclaimer Dialog
+
     Get.dialog(
       AlertDialog(
         title: Text("Disclaimer"),
@@ -79,31 +81,29 @@ class _BeautyFormState extends State<BeautyForm> {
           ),
           ElevatedButton(
             onPressed: () async {
-              Get.back(); // dismiss dialog first
+              Get.back();
 
               final body = {
-                "title": "${selectedMake ?? ''} ${selectedModel ?? ''} Request",
+                "title": '${selectedService} Request',
                 "state": selectedState,
                 "details": descriptionController.text.trim(),
-                "location": locationController.text.trim(),
-                "carMake": selectedMake,
-                "carModel": selectedModel,
-                "carYearFrom": int.tryParse(selectedYearFrom ?? '0') ?? 0,
-                "carYearTo": int.tryParse(selectedYearTo ?? '0') ?? 0,
-                "transmission": selectedTransmission?.toLowerCase(),
-                "upperPriceLimit": selectedPriceRange.end.toInt(),
-                "lowerPriceLimit": selectedPriceRange.start.toInt(),
+                "targetLocation": locationController.text.trim(),
+                "service": selectedService,
+                "date": selectedDate != null
+                    ? "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}"
+                    : null,
+                "time": selectedTime != null
+                    ? "${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}"
+                    : null,
+
               };
 
-              await requestController.createAutomobileRequest(body, onSuccess: () {
+              await requestController.createBeautyRequest(body, onSuccess: () {
                 setState(() {
                   selectedState = null;
-                  selectedMake = null;
-                  selectedModel = null;
-                  selectedYearFrom = null;
-                  selectedYearTo = null;
-                  selectedTransmission = null;
-                  selectedPriceRange = const RangeValues(0, 1000000);
+                  selectedService = null;
+                  selectedDate = null;
+                  selectedTime = null;
                   locationController.clear();
                   descriptionController.clear();
                   acceptTerms = false;
@@ -116,7 +116,7 @@ class _BeautyFormState extends State<BeautyForm> {
       ),
       barrierDismissible: false,
     );
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,18 +159,19 @@ class _BeautyFormState extends State<BeautyForm> {
 
 
             //services
-            DropdownTextField<String>(
-              label: 'Service Required',
-              hintText: 'Service Required',
-              items: beautyServices,
-              selectedItem: selectedService,
-              onChanged: (value) {
-                setState(() {
-                  selectedService = value;
-                });
-              },
-              itemToString: (val) => val,
-            ),
+        DropdownTextField<String>(
+          label: 'Service Required',
+          items: beautyServices.keys.toList(),
+          selectedItem: selectedLabel,
+          onChanged: (value) {
+            setState(() {
+              selectedLabel = value;
+              selectedService = beautyServices[value];
+            });
+          },
+          itemToString: (val) => val,
+        ),
+
             SizedBox(height: Dimensions.height20,),
 
 
@@ -265,7 +266,7 @@ class _BeautyFormState extends State<BeautyForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(
                         fontSize: 10,
                         color: textColor?.withOpacity(0.8),
@@ -283,7 +284,7 @@ class _BeautyFormState extends State<BeautyForm> {
               isDisabled: !isFormValid,
               text: 'Submit Request',
               onPressed: () {
-                // submitRequest();
+                submitRequest();
               },
             ),
             SizedBox(height: Dimensions.height30),

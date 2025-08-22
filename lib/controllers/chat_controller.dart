@@ -29,8 +29,8 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadCachedChats();
-    fetchChats();
+    // loadCachedChats();
+    // fetchChats();
   }
 
   bool get isMerchant {

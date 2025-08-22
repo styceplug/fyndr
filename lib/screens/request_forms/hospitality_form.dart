@@ -12,6 +12,7 @@ import '../../utils/dimensions.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/dropdown_textfield.dart';
+import '../../widgets/snackbars.dart';
 
 
 class HospitalityForm extends StatefulWidget {
@@ -23,6 +24,7 @@ class HospitalityForm extends StatefulWidget {
 
 class _HospitalityFormState extends State<HospitalityForm> {
   String? selectedService;
+  String? selectedLabel;
   String? selectedState;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
@@ -50,7 +52,7 @@ class _HospitalityFormState extends State<HospitalityForm> {
         acceptTerms;
   }
 
-  /* void submitRequest() async {
+   void submitRequest() async {
     if (!isFormValid) {
       MySnackBars.failure(
         title: "Incomplete",
@@ -82,31 +84,23 @@ class _HospitalityFormState extends State<HospitalityForm> {
               Get.back(); // dismiss dialog first
 
               final body = {
-                "title": "${selectedMake ?? ''} ${selectedModel ?? ''} Request",
+                "title": "${selectedService ?? ''} Request",
                 "state": selectedState,
+                "service" : selectedService,
+                "date": selectedDate?.toIso8601String(),
+                "time": selectedTime?.format(context),
                 "details": descriptionController.text.trim(),
                 "location": locationController.text.trim(),
-                "carMake": selectedMake,
-                "carModel": selectedModel,
-                "carYearFrom": int.tryParse(selectedYearFrom ?? '0') ?? 0,
-                "carYearTo": int.tryParse(selectedYearTo ?? '0') ?? 0,
-                "transmission": selectedTransmission?.toLowerCase(),
-                "upperPriceLimit": selectedPriceRange.end.toInt(),
-                "lowerPriceLimit": selectedPriceRange.start.toInt(),
               };
 
-              await requestController.createAutomobileRequest(body, onSuccess: () {
+              await requestController.createHospitalityRequest(body, onSuccess: () {
                 setState(() {
                   selectedState = null;
-                  selectedMake = null;
-                  selectedModel = null;
-                  selectedYearFrom = null;
-                  selectedYearTo = null;
-                  selectedTransmission = null;
-                  selectedPriceRange = const RangeValues(0, 1000000);
+                  selectedDate = null;
                   locationController.clear();
                   descriptionController.clear();
                   acceptTerms = false;
+                  selectedService = null;
                 });
               });
             },
@@ -116,7 +110,7 @@ class _HospitalityFormState extends State<HospitalityForm> {
       ),
       barrierDismissible: false,
     );
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,15 +156,17 @@ class _HospitalityFormState extends State<HospitalityForm> {
             DropdownTextField<String>(
               label: 'Service Required',
               hintText: 'Service Required',
-              items: hospitalityServices,
-              selectedItem: selectedService,
+              items: hospitalityServices.keys.toList(),
+              selectedItem: selectedLabel,
               onChanged: (value) {
                 setState(() {
-                  selectedService = value;
+                  selectedLabel = value;
+                  selectedService = hospitalityServices[value];
                 });
               },
               itemToString: (val) => val,
             ),
+
             SizedBox(height: Dimensions.height20,),
 
 
@@ -265,7 +261,7 @@ class _HospitalityFormState extends State<HospitalityForm> {
                   SizedBox(width: Dimensions.width5),
                   Expanded(
                     child: Text(
-                      'As per our policy a payment of N499 is required to post a request on Fyndr, accept to proceed',
+                      'As per our policy a payment of N250 is required to post a request on Fyndr, accept to proceed',
                       style: TextStyle(
                         fontSize: 10,
                         color: textColor?.withOpacity(0.8),
@@ -283,7 +279,7 @@ class _HospitalityFormState extends State<HospitalityForm> {
               isDisabled: !isFormValid,
               text: 'Submit Request',
               onPressed: () {
-                // submitRequest();
+                submitRequest();
               },
             ),
             SizedBox(height: Dimensions.height30),

@@ -140,7 +140,7 @@ class _MerchantVerifyOtpState extends State<MerchantVerifyOtp> {
               SizedBox(height: Dimensions.height10),
 
               Text(
-                'Enter the 4-digit code sent to your WhatsApp',
+                'Enter the 4-digit code sent to your inbox',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: Dimensions.font16,
