@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyndr/data/services/employment_data.dart';
+import 'package:fyndr/utils/colors.dart';
 
 import '../data/services/states_lga_local.dart';
 
@@ -183,6 +184,8 @@ class SkillsMultiSelect extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final Color effectiveBgColor = isDark ? AppColors.green2 : Color(0xFF85CE5C);
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +216,7 @@ class SkillsMultiSelect extends StatelessWidget {
                 ),
               ),
               selected: isSelected,
-              selectedColor: theme.colorScheme.primary,
+              selectedColor: effectiveBgColor,
               backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
               checkmarkColor: Colors.white,
               onSelected: (selected) {
@@ -248,6 +251,7 @@ class LanguageMultiSelect extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final Color effectiveBgColor = isDark ? AppColors.green2 : Color(0xFF85CE5C);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +282,7 @@ class LanguageMultiSelect extends StatelessWidget {
                 ),
               ),
               selected: isSelected,
-              selectedColor: theme.colorScheme.primary,
+              selectedColor: effectiveBgColor,
               backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
               checkmarkColor: Colors.white,
               onSelected: (selected) {

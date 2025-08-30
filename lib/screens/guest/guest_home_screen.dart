@@ -214,7 +214,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                     ServiceCard(
                       iconName: 'employ',
                       title: 'Employment',
-                      onTap: () => Get.toNamed(AppRoutes.guestCarHireForm),
+                      onTap: onItemTapped,
                     ),
                   ],
                 ),

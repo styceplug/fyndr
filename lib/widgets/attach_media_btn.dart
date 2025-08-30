@@ -9,8 +9,9 @@ import 'package:path_provider/path_provider.dart';
 
 class MediaAttachmentWidget extends StatefulWidget {
   final Function(File?)? onImageSelected;
+  final String? title;
 
-  const MediaAttachmentWidget({super.key, this.onImageSelected});
+  const MediaAttachmentWidget({super.key, this.onImageSelected, this.title});
 
   @override
   State<MediaAttachmentWidget> createState() => _MediaAttachmentWidgetState();
@@ -42,7 +43,10 @@ class _MediaAttachmentWidgetState extends State<MediaAttachmentWidget> {
 
   Future<File?> _compressImage(File file) async {
     final dir = await getTemporaryDirectory();
-    final targetPath = path.join(dir.path, 'compressed_${path.basename(file.path)}');
+    final targetPath = path.join(
+      dir.path,
+      'compressed_${path.basename(file.path)}',
+    );
 
     final XFile? compressed = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
@@ -92,7 +96,7 @@ class _MediaAttachmentWidgetState extends State<MediaAttachmentWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Attach Media',
+          widget.title ?? "Media Attachment",
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -105,7 +109,10 @@ class _MediaAttachmentWidgetState extends State<MediaAttachmentWidget> {
             OutlinedButton.icon(
               onPressed: () => _pickMedia(ImageSource.gallery),
               icon: Icon(Icons.photo_library, color: theme.iconTheme.color),
-              label: Text("Gallery", style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+              label: Text(
+                "Gallery",
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+              ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.dividerColor),
               ),
@@ -114,7 +121,10 @@ class _MediaAttachmentWidgetState extends State<MediaAttachmentWidget> {
             OutlinedButton.icon(
               onPressed: () => _pickMedia(ImageSource.camera),
               icon: Icon(Icons.camera_alt, color: theme.iconTheme.color),
-              label: Text("Camera", style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+              label: Text(
+                "Camera",
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+              ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.dividerColor),
               ),
@@ -167,7 +177,9 @@ class _MediaAttachmentWidgetState extends State<MediaAttachmentWidget> {
                     minHeight: 5,
                     backgroundColor: theme.dividerColor.withOpacity(0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      _uploadProgress >= 1.0 ? Colors.green : theme.colorScheme.primary,
+                      _uploadProgress >= 1.0
+                          ? Colors.green
+                          : theme.colorScheme.primary,
                     ),
                   ),
                 ),

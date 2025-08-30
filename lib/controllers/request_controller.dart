@@ -37,9 +37,19 @@ class RequestController extends GetxController {
   final RxBool isLoadingUserRequests = false.obs;
   List<JobModel> jobList = [];
   List<JobModel> filteredJobs = [];
-  var cvList = <CvModel>[].obs;
-
+  List<CvModel> cvList = [];
+  List<CvModel> filteredCvs = [];
+  JobModel? selectedJob;
   AuthController? _authController;
+  var fetchingCV = false.obs;
+  CvModel? selectedCv;
+  File? cvImageFile;
+
+  void setSelectedCv(CvModel cv) {
+    selectedCv = cv;
+    update();
+  }
+
 
   AuthController get authController {
     _authController ??= Get.find<AuthController>();
@@ -106,40 +116,235 @@ class RequestController extends GetxController {
     }
   }
 
-  Future<void> postCv(Map<String, dynamic> body) async {
-    loader.showLoader();
-    final response = await requestRepo.postCV(body);
-    loader.hideLoader();
-
-    final resBody = response.body;
-    if ((response.statusCode == 200 || response.statusCode == 201) &&
-        resBody != null &&
-        resBody['code'] == '00') {
-      await fetchUserRequests();
-      print(resBody);
-      MySnackBars.success(
-        title: 'Success',
-        message: resBody['message'] ?? 'CV Posted successfully',
-      );
-    } else {
-      MySnackBars.failure(
-        title: 'Failed',
-        message: resBody?['message'] ?? 'Request failed',
-      );
-    }
-  }
-
-
   Future<void> fetchCvs() async {
-    loader.showLoader();
-    final response = await requestRepo.getAllCv();
-    if (response.statusCode == 200 && response.body['code'] == "00") {
-      List data = response.body['data'];
-      cvList.value = data.map((e) => CvModel.fromJson(e)).toList();
+    try {
+      loader.showLoader();
+      update();
+
+      final response = await requestRepo.getAllCv();
+
+      if (response.statusCode == 200 && response.body['code'] == '00') {
+        final cvs = (response.body['data'] as List)
+            .map((e) => CvModel.fromJson(e))
+            .toList();
+
+        cvList = cvs;
+        filteredCvs = cvs;
+      } else {
+        cvList = [];
+        filteredCvs = [];
+      }
+    } catch (e) {
+      print("❌ Error fetching CVs: $e");
+      cvList = [];
+      filteredCvs = [];
+    } finally {
+      loader.hideLoader();
       update();
     }
-    loader.hideLoader();
   }
+
+  Future<void> fetchMyCvs() async {
+    try {
+      fetchingCV = true.obs;
+      update();
+
+      final response = await requestRepo.getMyCv();
+
+      if (response.statusCode == 200 && response.body['code'] == '00') {
+        final cvs = (response.body['data'] as List)
+            .map((e) => CvModel.fromJson(e))
+            .toList();
+
+        cvList = cvs;
+        filteredCvs = cvs;
+      } else {
+        cvList = [];
+        filteredCvs = [];
+      }
+    } catch (e) {
+      print("❌ Error fetching CVs: $e");
+      cvList = [];
+      filteredCvs = [];
+    } finally {
+      fetchingCV = false.obs;
+      update();
+    }
+  }
+
+  void filterCvs(String query) {
+    if (query.isEmpty) {
+      filteredCvs = cvList;
+    } else {
+      filteredCvs = cvList.where((cv) {
+        final education = cv.educationDetails?.educationMajor?.toLowerCase() ?? '';
+        final skills = cv.skills.map((s) => s.toLowerCase()).toList();
+
+        return education.contains(query.toLowerCase()) ||
+            skills.any((s) => s.contains(query.toLowerCase()));
+      }).toList();
+    }
+    update();
+  }
+
+  Future<void> postCv(Map<String, dynamic> body, {File? image}) async {
+    loader.showLoader(); // Uncommented loader
+
+    try {
+      final response = await requestRepo.postCV(body, image: image);
+      loader.hideLoader();
+
+      final resBody = response.body;
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          resBody != null &&
+          resBody['code'] == '00') {
+        MySnackBars.success(
+          title: 'Success',
+          message: resBody['message'] ?? 'CV Posted successfully',
+        );
+      } else {
+        MySnackBars.failure(
+          title: 'Failed',
+          message: resBody?['message'] ?? 'Request failed',
+        );
+      }
+    } catch (e) {
+      loader.hideLoader();
+      MySnackBars.failure(
+        title: 'Error',
+        message: 'An error occurred while submitting your CV',
+      );
+      print("Error in postCv: $e");
+    }
+  }
+
+
+  Future<void> postProposal(Map<String, dynamic> body, String jobId) async {
+    try {
+      loader.showLoader();
+
+      final response = await requestRepo.postProposal(jobId, body);
+      loader.hideLoader();
+
+      final resBody = response.body;
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          resBody != null &&
+          resBody['code'] == '00') {
+        MySnackBars.success(
+          title: 'Success',
+          message: resBody['message'] ?? 'Proposal posted successfully',
+        );
+      } else {
+        MySnackBars.failure(
+          title: 'Failed',
+          message: resBody?['message'] ?? 'Request failed',
+        );
+      }
+    } catch (e) {
+      loader.hideLoader();
+      MySnackBars.failure(
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
+  }
+
+
+  Future<void> fetchSingleJob(String jobId) async {
+    try {
+      print("📡 Fetching single job with ID: $jobId");
+
+      loader.showLoader();
+      update();
+
+      Response response = await requestRepo.getSingleJob(jobId);
+
+      print("✅ Raw Response: ${response.body}");
+      print("✅ Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        if (response.body != null && response.body["code"] == "00") {
+          print("🎯 Job data found, parsing...");
+          selectedJob = JobModel.fromJson(response.body["data"]);
+          print("🎉 Parsed Job: ${selectedJob?.jobDetails?.title}");
+        } else {
+          print("⚠️ Unexpected response structure: ${response.body}");
+          Get.snackbar("Error", response.body?["message"] ?? "Something went wrong");
+        }
+      } else {
+        print("❌ Failed with status: ${response.statusCode}, body: ${response.body}");
+        Get.snackbar("Error", "Server returned ${response.statusCode}");
+      }
+    } catch (e, s) {
+      print("🔥 Exception in fetchSingleJob: $e");
+      print("📌 Stacktrace: $s");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      loader.hideLoader();
+      update();
+      print("🔄 fetchSingleJob finished");
+    }
+  }
+
+/*  Future<void> fetchSingleCv(String cvId) async {
+    try {
+      print("📡 Fetching single job with ID: $cvId");
+
+      loader.showLoader();
+      update();
+
+      Response response = await requestRepo.getSingleCv(cvId);
+
+      print("✅ Raw Response: ${response.body}");
+      print("✅ Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        if (response.body != null && response.body["code"] == "00") {
+          print("🎯 Cv data found, parsing...");
+          selectedCv = CvModel.fromJson(response.body["data"]);
+          print("🎉 Parsed Job: ${selectedCv?.workExperienceDetails.jobTitle}");
+        } else {
+          print("⚠️ Unexpected response structure: ${response.body}");
+          Get.snackbar("Error", response.body?["message"] ?? "Something went wrong");
+        }
+      } else {
+        print("❌ Failed with status: ${response.statusCode}, body: ${response.body}");
+        Get.snackbar("Error", "Server returned ${response.statusCode}");
+      }
+    } catch (e, s) {
+      print("🔥 Exception in fetchSingleCv: $e");
+      print("📌 Stacktrace: $s");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      loader.hideLoader();
+      update();
+      print("🔄 fetchSingleCv finished");
+    }
+  }*/
+  Future<bool> fetchSingleCv(String cvId) async {
+    try {
+
+      loader.showLoader();
+      Response response = await requestRepo.getSingleCv(cvId);
+
+      if (response.statusCode == 200 && response.body != null) {
+        selectedCv = CvModel.fromJson(response.body["data"]);
+        loader.hideLoader();
+        update();
+        return true;
+      } else {
+        selectedCv = null;
+        update();
+        return false;
+      }
+    } catch (e) {
+      selectedCv = null;
+      update();
+      return false;
+    }
+  }
+
 
   //MERCHANTS
 

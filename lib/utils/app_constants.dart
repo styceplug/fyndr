@@ -7,7 +7,8 @@ class AppConstants {
 
 
   // static const String BASE_URL = 'http://fyndr.ng:5002/api';
-  static const String BASE_URL = 'https://rheel-compare.onrender.com/api';
+  // static const String BASE_URL = 'https://rheel-compare.onrender.com/api';
+  static const String BASE_URL = 'https://api.fyndr.ng/api';
 
   //TOKEN
   static const authToken = 'authToken';
@@ -63,7 +64,12 @@ class AppConstants {
   static const String GET_JOB_LISTINGS= '/v1/job';
   static const String GET_ALL_CV= '/v1/cv';
   static const String POST_OPEN_JOB = '/v1/job';
+  static const String GET_SINGLE_JOB = '/v1/job/single/{jobId}';
   static const String POST_CV = '/v1/cv';
+  static const String GET_SINGLE_CV = '/v1/cv/single/{cvId}';
+  static const String GET_USER_CV = '/v1/cv/personal';
+  static const String POST_PROPOSAL = '/v1/job/single/{jobId}';
+
 
 
 

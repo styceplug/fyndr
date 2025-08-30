@@ -176,7 +176,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       height: Dimensions.height50,
                       width: Dimensions.width360,
                       decoration: BoxDecoration(
-                        border: Border.all(color: theme.colorScheme.primary),
+                        border: Border.all(color: isDark? theme.colorScheme.primary : Color(0xFF85CE5C)),
                         borderRadius: BorderRadius.circular(Dimensions.radius10),
                       ),
                       child: Center(
@@ -184,7 +184,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           'Sign in as Merchant',
                           style: TextStyle(
                             fontFamily: "Poppins",
-                            color: theme.colorScheme.primary,
+                            color: isDark? theme.colorScheme.primary : Color(0xFF85CE5C),
                             fontSize: Dimensions.font18,
                           ),
                         ),
@@ -201,7 +201,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       height: Dimensions.height50,
                       width: Dimensions.width360,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
+                        color: isDark? AppColors.primary : Color(0xFF85CE5C),
                         borderRadius: BorderRadius.circular(Dimensions.radius10),
                       ),
                       child: Center(
@@ -209,7 +209,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           'Sign in as Customer',
                           style: TextStyle(
                             fontFamily: "Poppins",
-                            color: theme.colorScheme.onPrimary,
+                            color: isDark? theme.colorScheme.onPrimary : AppColors.darkBg,
                             fontSize: Dimensions.font18,
                           ),
                         ),
@@ -243,6 +243,8 @@ class OnBoardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -256,7 +258,7 @@ class OnBoardContent extends StatelessWidget {
           child: Text(
             'Continue as Guest',
             style: TextStyle(
-              color: theme.colorScheme.primary,
+              color: isDark? theme.colorScheme.primary : Color(0xFF85CE5C),
               fontWeight: FontWeight.w500,
               fontSize: Dimensions.font14,
               decoration: TextDecoration.underline,

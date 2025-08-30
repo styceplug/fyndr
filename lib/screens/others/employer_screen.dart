@@ -23,6 +23,7 @@ class EmployerScreen extends StatefulWidget {
 class _EmployerScreenState extends State<EmployerScreen> {
 
   RequestController requestController = Get.find<RequestController>();
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -30,6 +31,11 @@ class _EmployerScreenState extends State<EmployerScreen> {
       requestController.fetchCvs();
     });
     super.initState();
+  }
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,51 +53,66 @@ class _EmployerScreenState extends State<EmployerScreen> {
         leadingIcon: BackButton(),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: Dimensions.width20,
-            vertical: Dimensions.height20,
-          ),
-          child: Column(
-            children: [
-              CustomButton(
-                text: 'Post a Job',
-                onPressed: () {
-                  Get.toNamed(AppRoutes.postJobScreen);
-                },
-              ),
-              SizedBox(height: Dimensions.height20),
-              CustomTextField(
-                hintText: 'Filter by Job Title',
-                prefixIcon: Icons.search,
-              ),
-              SizedBox(height: Dimensions.height20),
-
-              Expanded(
-                child: GetBuilder<RequestController>(
-                  builder: (controller) {
-                    if (controller.cvList.isEmpty) {
-                      return const EmptyState(message: "No jobs available");
-                    }
-
-                    return ListView.builder(
-                      itemCount: controller.cvList.length,
-                      itemBuilder: (context, index) {
-                        CvModel cv = controller.cvList[index];
-
-                        return CvCard(cv: cv,
-                          firstName: cv.firstName,
-                          lastName: cv.lastName,
-                          state: cv.state,
-                          educationMajor: cv.educationDetails.educationMajor,
-                          timePosted: timeago.format(cv.createdAt),
-                        );
+        child: RefreshIndicator(
+          onRefresh: ()async {
+            requestController.fetchCvs();
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Dimensions.width20,
+              vertical: Dimensions.height20,
+            ),
+            child: SingleChildScrollView(
+              child: Container(
+                height: Dimensions.screenHeight,
+                child: Column(
+                  children: [
+                    CustomButton(
+                      text: 'Post a Job',
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.postJobScreen);
                       },
-                    );
-                  },
+                    ),
+                    SizedBox(height: Dimensions.height20),
+                    CustomTextField(
+                      hintText: 'Filter by Role',
+                      prefixIcon: Icons.search,
+                      controller: searchController,
+                      onChanged: (value){
+                        requestController.filterCvs(value);
+                      },
+                    ),
+                    SizedBox(height: Dimensions.height20),
+
+                    Expanded(
+                      child: GetBuilder<RequestController>(
+                        builder: (controller) {
+                          if (controller.filteredCvs.isEmpty) {
+                            return const EmptyState(message: "No jobs available");
+                          }
+
+                          return ListView.builder(
+                            itemCount: controller.filteredCvs.length,
+                            itemBuilder: (context, index) {
+                              CvModel cv = controller.filteredCvs[index];
+
+                              return CvCard(cv: cv,
+                                avatar: cv.profileImage ?? '',
+                                firstName: cv.firstName,
+                                lastName: cv.lastName,
+                                state: cv.state,
+                                educationMajor: cv.educationDetails.educationMajor,
+                                timePosted: timeago.format(cv.createdAt),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

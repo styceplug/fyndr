@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fyndr/controllers/request_controller.dart';
 import 'package:fyndr/data/services/employment_data.dart';
 import 'package:fyndr/widgets/job_post_card.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../models/job_model.dart';
+import '../routes/routes.dart';
 import '../utils/app_constants.dart';
 import '../utils/dimensions.dart';
 
@@ -10,6 +14,7 @@ class CvCard extends StatelessWidget {
   final CvModel cv;
   final String? firstName;
   final String? lastName;
+  final String avatar;
   final String? state;
   final String? timePosted;
   final String? educationMajor;
@@ -19,6 +24,7 @@ class CvCard extends StatelessWidget {
     required this.cv,
     this.firstName,
     this.lastName,
+    required this.avatar,
     this.state,
     this.educationMajor,
     required this.timePosted,
@@ -30,97 +36,110 @@ class CvCard extends StatelessWidget {
 
     return Container(
       height: Dimensions.height20 * 5,
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.width10,
-        vertical: Dimensions.height10,
+      padding: EdgeInsets.fromLTRB(
+        0,
+        Dimensions.height10,
+        Dimensions.width20,
+        Dimensions.height10,
       ),
+
       margin: EdgeInsets.only(bottom: Dimensions.height10),
       decoration: BoxDecoration(
         border: Border.all(color: iconColor.withOpacity(0.4)),
-        borderRadius: BorderRadius.circular(Dimensions.radius10),
+        borderRadius: BorderRadius.circular(Dimensions.radius30 * 2),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                height: Dimensions.height10 * 5,
-                width: Dimensions.width10 * 5,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).dividerColor.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(Dimensions.radius10),
-                ),
-                child: Icon(Icons.work_history_rounded, color: iconColor),
+          Container(
+            height: Dimensions.height20 * 5,
+            width: Dimensions.width20 * 5,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).primaryColor,
+                width: Dimensions.width5 / Dimensions.width5,
               ),
-              SizedBox(width: Dimensions.width20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-
-                  Row(
+              shape: BoxShape.circle,
+              color: Theme.of(context).dividerColor.withOpacity(0.05),
+              image: DecorationImage(
+                image: NetworkImage(avatar!),
+                fit: BoxFit.cover,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+          ),
+          SizedBox(width: Dimensions.width10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: Row(
                     children: [
                       Text(
                         (firstName ?? '').capitalizeEachWord(),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(width: Dimensions.width5),
-                      Text(
-                        (lastName ?? '').capitalizeEachWord(),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
-                        overflow: TextOverflow.ellipsis,
+                      Flexible(
+                        child: Text(
+                          (lastName ?? '').capitalizeEachWord(),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
-                  Text(
-                    (state ?? '').capitalizeEachWord(),
+                ),
+                Expanded(
+                  child: Text(
+                    (educationMajor ?? '').capitalizeEachWord(),
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontSize: Dimensions.font14,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
+                ),
+                Expanded(
+                  child: Text(
+                    "${(state ?? '').capitalizeEachWord()} State, Nigeria",
+                    overflow: TextOverflow.ellipsis,
 
-                ],
-              ),
-              const Spacer(),
-              Text('Expand CV', style: TextStyle(color: Colors.blueAccent)),
-            ],
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontSize: Dimensions.font14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.width10,
-                  vertical: Dimensions.height5,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).dividerColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(Dimensions.radius5),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.school,
-                      size: Dimensions.iconSize16,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    SizedBox(width: Dimensions.width5),
-                    Text(
-                      educationMajor!.capitalizeEachWord(),
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
+          SizedBox(width: Dimensions.width10,),
+          InkWell(
+            onTap: () async {
+              RequestController controller = Get.find<RequestController>();
+              bool success = await controller.fetchSingleCv(cv.id);
 
-              Text(timePosted.toString(), overflow: TextOverflow.ellipsis),
-            ],
+              if (!success || controller.selectedCv == null) {
+                Get.snackbar(
+                  "Error",
+                  "Failed to load CV details. Please try again.",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.redAccent,
+                  colorText: Colors.white,
+                );
+                return;
+              }
+
+              Get.toNamed(AppRoutes.cvDetailsScreen);
+            },
+            child: Text('View CV', style: TextStyle(color: Colors.blueAccent)),
           ),
         ],
       ),

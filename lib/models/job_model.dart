@@ -1,6 +1,8 @@
+import 'package:fyndr/models/user_model.dart';
+
 class JobModel {
   String? id;
-  Employer? employer; // ✅ FIXED
+  Employer? employer;
   EmployerDetails? employerDetails;
   JobDetails? jobDetails;
   List<Applicant>? applicants;
@@ -58,11 +60,11 @@ class JobModel {
 }
 
 class Employer {
-  String? id;
-  String? number;
-  String? email;
-  String? name;
-  String? avatar;
+  final String? id;
+  final String? number;
+  final String? email;
+  final String? name;
+  final String? avatar;
 
   Employer({
     this.id,
@@ -81,7 +83,6 @@ class Employer {
       avatar: json['avatar'],
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       "_id": id,
@@ -95,10 +96,12 @@ class Employer {
 
 class EmployerDetails {
   String? company;
+  String? companyImage;
   String? firstName;
   String? lastName;
   String? number;
   String? email;
+  String? howYouHeardAboutUs;
 
   EmployerDetails({
     this.company,
@@ -106,11 +109,14 @@ class EmployerDetails {
     this.lastName,
     this.number,
     this.email,
+    this.howYouHeardAboutUs,
+    this.companyImage,
   });
 
   factory EmployerDetails.fromJson(Map<String, dynamic> json) {
     return EmployerDetails(
       company: json['company'],
+      companyImage: json['companyImage'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       number: json['number'],
@@ -125,6 +131,7 @@ class EmployerDetails {
       "lastName": lastName,
       "number": number,
       "email": email,
+      "companyImage": companyImage,
     };
   }
 }
@@ -183,88 +190,6 @@ class JobDetails {
   }
 }
 
-class Applicant {
-  String? user;
-  String? firstName;
-  String? lastName;
-  String? number;
-  String? email;
-  String? state;
-  String? lga;
-  String? area;
-  bool? isGraduate;
-  EducationDetails? educationDetails;
-  bool? hasWorkExperience;
-  WorkExperienceDetails? workExperienceDetails;
-  List<String>? skills;
-  String? additionalCertificate;
-  List<String>? languages;
-
-  Applicant({
-    this.user,
-    this.firstName,
-    this.lastName,
-    this.number,
-    this.email,
-    this.state,
-    this.lga,
-    this.area,
-    this.isGraduate,
-    this.educationDetails,
-    this.hasWorkExperience,
-    this.workExperienceDetails,
-    this.skills,
-    this.additionalCertificate,
-    this.languages,
-  });
-
-  factory Applicant.fromJson(Map<String, dynamic> json) {
-    return Applicant(
-      user: json['user'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      number: json['number'],
-      email: json['email'],
-      state: json['state'],
-      lga: json['lga'],
-      area: json['area'],
-      isGraduate: json['isGraduate'],
-      educationDetails: json['educationDetails'] != null
-          ? EducationDetails.fromJson(json['educationDetails'])
-          : null,
-      hasWorkExperience: json['hasWorkExperience'],
-      workExperienceDetails: json['workExperienceDetails'] != null
-          ? WorkExperienceDetails.fromJson(json['workExperienceDetails'])
-          : null,
-      skills:
-      json['skills'] != null ? List<String>.from(json['skills']) : [],
-      additionalCertificate: json['additionalCertificate'],
-      languages:
-      json['languages'] != null ? List<String>.from(json['languages']) : [],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "user": user,
-      "firstName": firstName,
-      "lastName": lastName,
-      "number": number,
-      "email": email,
-      "state": state,
-      "lga": lga,
-      "area": area,
-      "isGraduate": isGraduate,
-      "educationDetails": educationDetails?.toJson(),
-      "hasWorkExperience": hasWorkExperience,
-      "workExperienceDetails": workExperienceDetails?.toJson(),
-      "skills": skills,
-      "additionalCertificate": additionalCertificate,
-      "languages": languages,
-    };
-  }
-}
-
 class EducationDetails {
   String? educationLevel;
   String? educationMajor;
@@ -302,30 +227,26 @@ class EducationDetails {
 }
 
 class WorkExperienceDetails {
-  String? years;
-  String? company;
-  String? jobTitle;
-  String? duration;
+  final String company;
+  final String jobTitle;
+  final String duration;
 
   WorkExperienceDetails({
-    this.years,
-    this.company,
-    this.jobTitle,
-    this.duration,
+    this.company = "",
+    this.jobTitle = "",
+    this.duration = "",
   });
 
   factory WorkExperienceDetails.fromJson(Map<String, dynamic> json) {
     return WorkExperienceDetails(
-      years: json['years'],
-      company: json['company'],
-      jobTitle: json['jobTitle'],
-      duration: json['duration'],
+      company: json["company"]?.toString() ?? "",
+      jobTitle: json["jobTitle"]?.toString() ?? "",
+      duration: json["duration"]?.toString() ?? "",
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "years": years,
       "company": company,
       "jobTitle": jobTitle,
       "duration": duration,
@@ -333,9 +254,41 @@ class WorkExperienceDetails {
   }
 }
 
+class Applicant {
+  final String? cv;
+  final UserModel? user;
+  final String? proposal;
+
+  Applicant({
+    this.cv,
+    this.user,
+    this.proposal,
+  });
+
+  factory Applicant.fromJson(Map<String, dynamic> json) {
+    return Applicant(
+      cv: json['cv'] is Map<String, dynamic>
+          ? CvModel.fromJson(json['cv']).id
+          : json['cv']?.toString(),
+      user: json['user'] != null
+          ? UserModel.fromJson(json['user'])
+          : null,
+      proposal: json['proposal'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "cv": cv,
+      "user": user?.toJson(),
+      "proposal": proposal,
+    };
+  }
+
+}
+
 class CvModel {
   final String id;
-  final String user;
+  final UserModel user;
   final String firstName;
   final String lastName;
   final String number;
@@ -346,12 +299,13 @@ class CvModel {
   final bool isGraduate;
   final EducationDetails educationDetails;
   final bool hasWorkExperience;
-  final WorkExperienceDetails workExperienceDetails;
+  final List<WorkExperienceDetails> workExperienceDetails;
   final List<String> skills;
   final String additionalCertificate;
   final List<String> languages;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? profileImage;
 
   CvModel({
     required this.id,
@@ -372,29 +326,72 @@ class CvModel {
     required this.languages,
     required this.createdAt,
     required this.updatedAt,
+    this.profileImage,
   });
 
   factory CvModel.fromJson(Map<String, dynamic> json) {
     return CvModel(
-      id: json["_id"] ?? "",
-      user: json["user"] ?? "",
-      firstName: json["firstName"] ?? "",
-      lastName: json["lastName"] ?? "",
-      number: json["number"] ?? "",
-      email: json["email"] ?? "",
-      state: json["state"] ?? "",
-      lga: json["lga"] ?? "",
-      area: json["area"] ?? "",
-      isGraduate: json["isGraduate"] ?? false,
-      educationDetails: EducationDetails.fromJson(json["educationDetails"] ?? {}),
-      hasWorkExperience: json["hasWorkExperience"] ?? false,
-      workExperienceDetails: WorkExperienceDetails.fromJson(json["workExperienceDetails"] ?? {}),
-      skills: List<String>.from(json["skills"] ?? []),
-      additionalCertificate: json["additionalCertificate"] ?? "",
-      languages: List<String>.from(json["languages"] ?? []),
-      createdAt: DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now(),
+      id: json["_id"]?.toString() ?? "",
+      user: json["user"] is Map<String, dynamic>
+          ? UserModel.fromJson(json["user"])
+          : UserModel(),
+      firstName: json["firstName"]?.toString() ?? "",
+      lastName: json["lastName"]?.toString() ?? "",
+      number: json["number"]?.toString() ?? "",
+      email: json["email"]?.toString() ?? "",
+      state: json["state"]?.toString() ?? "",
+      lga: json["lga"]?.toString() ?? "",
+      area: json["area"]?.toString() ?? "",
+      isGraduate: json["isGraduate"] is bool ? json["isGraduate"] : false,
+      educationDetails: json["educationDetails"] is Map<String, dynamic>
+          ? EducationDetails.fromJson(json["educationDetails"])
+          : EducationDetails(),
+      hasWorkExperience:
+      json["hasWorkExperience"] is bool ? json["hasWorkExperience"] : false,
+      workExperienceDetails: json["workExperienceDetails"] is List
+          ? List<WorkExperienceDetails>.from(
+        json["workExperienceDetails"].map(
+              (x) => WorkExperienceDetails.fromJson(x),
+        ),
+      )
+          : [],
+      skills: json["skills"] is List
+          ? List<String>.from(json["skills"].map((x) => x.toString()))
+          : [],
+      additionalCertificate: json["additionalCertificate"]?.toString() ?? "",
+      languages: json["languages"] is List
+          ? List<String>.from(json["languages"].map((x) => x.toString()))
+          : [],
+      createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? "") ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? "") ??
+          DateTime.now(),
+      profileImage: json["profileImage"]?.toString(),
     );
   }
-}
 
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "user": user.toJson(),
+      "firstName": firstName,
+      "lastName": lastName,
+      "number": number,
+      "email": email,
+      "state": state,
+      "lga": lga,
+      "area": area,
+      "isGraduate": isGraduate,
+      "educationDetails": educationDetails.toJson(),
+      "hasWorkExperience": hasWorkExperience,
+      "workExperienceDetails":
+      workExperienceDetails.map((x) => x.toJson()).toList(),
+      "skills": skills,
+      "additionalCertificate": additionalCertificate,
+      "languages": languages,
+      "createdAt": createdAt.toIso8601String(),
+      "updatedAt": updatedAt.toIso8601String(),
+      "profileImage": profileImage,
+    };
+  }
+}

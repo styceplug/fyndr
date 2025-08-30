@@ -50,6 +50,8 @@ import 'package:fyndr/widgets/merchant_bottom_nav.dart';
 import '../screens/auth/merchant/merchant_verify_otp.dart';
 import '../screens/main_menu/merchant/merchant_request_details_screen.dart';
 import '../screens/main_menu/merchant/update_business.dart';
+import '../screens/others/cv_details_screen.dart';
+import '../screens/others/job_details_screen.dart';
 import '../screens/splash_onboard/splash_screen.dart';
 
 class AppRoutes {
@@ -96,6 +98,9 @@ class AppRoutes {
   static const String jobSeekerScreen = '/job-seeker-screen';
   static const String postJobScreen = '/post-job-screen';
   static const String postCvScreen = '/post-cv-screen';
+  static const String jobDetailsScreen = '/job-details-screen';
+  static const String cvDetailsScreen = '/cv-details-screen';
+
 
   static const String merchantMessageScreen = '/merchant-message';
   static const String merchantProfileScreen = '/merchant-profile';
@@ -469,5 +474,21 @@ class AppRoutes {
       },
       transition: Transition.fadeIn,
     ),
+    GetPage(
+      name: jobDetailsScreen,
+      page: () {
+        return  JobDetailsScreen();
+      },
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: cvDetailsScreen,
+      page: () {
+        return const CvDetailsScreen();
+      },
+      transition: Transition.fadeIn,
+    ),
+
+
   ];
 }

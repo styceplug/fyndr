@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:fyndr/screens/auth/user/user_complete_auth.dart';
 import 'package:get/get.dart';
 import 'package:mime/mime.dart';
 import '../../utils/app_constants.dart';
 import '../api/api_client.dart';
+import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
 import 'package:http_parser/http_parser.dart';
@@ -188,11 +191,108 @@ class RequestRepo {
     return await apiClient.postData(AppConstants.POST_OPEN_JOB, body);
   }
 
-  Future<Response> postCV(Map<String, dynamic> body) async {
+ /* Future<Response> postCV(Map<String, dynamic> body) async {
     return await apiClient.postData(AppConstants.POST_CV, body);
+  }*/
+  Future<Response> postCV(Map<String, dynamic> body, {File? image}) async {
+    var url = '${AppConstants.BASE_URL}${AppConstants.POST_CV}';
+
+    if (image != null) {
+      var request = http.MultipartRequest("POST", Uri.parse(url));
+
+      String? token = await authController.getUserToken();
+      if (token != null) {
+        request.headers['Authorization'] = "Bearer $token";
+      }
+      request.headers['Accept'] = "application/json";
+
+      // Add form fields
+      body.forEach((key, value) {
+        if (value != null) {
+          if (value is List) {
+            // Handle arrays (skills, languages, workExperienceDetails)
+            if (key == 'workExperienceDetails') {
+              // Convert work experience to JSON string
+              request.fields[key] = jsonEncode(value);
+            } else {
+              // Handle simple arrays like skills and languages
+              for (int i = 0; i < value.length; i++) {
+                request.fields['$key[$i]'] = value[i].toString();
+              }
+            }
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+      });
+
+      // Get proper MIME type based on file extension
+      String fileName = image.path.toLowerCase();
+      String mimeType;
+      if (fileName.endsWith('.png')) {
+        mimeType = 'image/png';
+      } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+        mimeType = 'image/jpeg';
+      } else if (fileName.endsWith('.gif')) {
+        mimeType = 'image/gif';
+      } else if (fileName.endsWith('.webp')) {
+        mimeType = 'image/webp';
+      } else {
+        mimeType = 'image/jpeg'; // Default fallback
+      }
+
+      request.files.add(await http.MultipartFile.fromPath(
+        "cv_image",
+        image.path,
+        contentType: MediaType.parse(mimeType),
+      ));
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      try {
+        return Response(
+          statusCode: response.statusCode,
+          body: jsonDecode(response.body),
+        );
+      } catch (e, s) {
+        print("JSON decode error: $e");
+        print("StackTrace: $s");
+        print("Raw response: ${response.body}");
+
+        return Response(
+          statusCode: response.statusCode,
+          body: {
+            "error": "Invalid JSON format",
+            "raw": response.body,
+          },
+        );
+      }
+    } else {
+      return await apiClient.postData(url, body);
+    }
+  }
+
+  Future<Response> postProposal(String jobId, Map<String, dynamic> body) async {
+    return await apiClient.postData(
+      "${AppConstants.POST_PROPOSAL}/$jobId",
+      body,
+    );
   }
 
   Future<Response> getAllCv() async{
     return await apiClient.getData(AppConstants.GET_ALL_CV);
+  }
+
+  Future<Response> getMyCv() async{
+    return await apiClient.getData(AppConstants.GET_USER_CV);
+  }
+
+  Future<Response> getSingleJob(String jobId) async {
+    return await apiClient.getData("/v1/job/single/$jobId");
+  }
+
+  Future<Response> getSingleCv(String cvId) async {
+    return await apiClient.getData("/v1/cv/single/$cvId");
   }
 }

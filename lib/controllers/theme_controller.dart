@@ -35,6 +35,8 @@ class ThemeController extends GetxController {
 
   void _loadThemeFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
+    final sss = prefs.getBool(themeKey);
+    print('the themekey $themeKey is $sss');
     final savedTheme = prefs.getString(themeKey);
 
     switch (savedTheme) {
